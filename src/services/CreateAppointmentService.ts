@@ -2,6 +2,7 @@ import { startOfHour } from 'date-fns';
 import { getCustomRepository } from 'typeorm';
 import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import AppError from '../errors/AppError';
 
 interface RequestDTO {
   provider_id: string;
@@ -18,7 +19,7 @@ class CreateAppointmentService {
     const appointmentDate = startOfHour(date);
 
     if (await appointmentsRepository.findByDate(appointmentDate)) {
-      throw Error('Sorry, scheadule not available.');
+      throw new AppError('Sorry, scheadule not available.');
     }
 
     const appointment = appointmentsRepository.create({
