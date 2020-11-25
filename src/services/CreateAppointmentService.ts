@@ -1,6 +1,7 @@
 import { startOfHour } from 'date-fns';
-import { getCustomRepository } from 'typeorm';
+import { getCustomRepository, getRepository } from 'typeorm';
 import Appointment from '../models/Appointment';
+import User from '../models/User';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import AppError from '../errors/AppError';
 
@@ -15,6 +16,11 @@ class CreateAppointmentService {
     date,
   }: RequestDTO): Promise<Appointment> {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+    const userRepository = getRepository(User);
+
+    if (!(await userRepository.findOne(provider_id))) {
+      throw new AppError('Invalid provider id');
+    }
 
     const appointmentDate = startOfHour(date);
 
